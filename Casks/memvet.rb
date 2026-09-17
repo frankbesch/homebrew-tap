@@ -33,9 +33,13 @@ cask "memvet" do
 
   binary "memvet"
 
-  postflight do
-    if system_command("/usr/bin/xattr", args: ["-h"]).exit_status == 0
-      system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/memvet"]
+  # Hand-migrated 2026-09-17 from the deprecated `postflight` block (Homebrew 7.0).
+  # GoReleaser regenerates this file on the next memvet tag; the matching
+  # `install_steps` config lands in memvet's .goreleaser.yaml once GoReleaser
+  # v2.19 ships (goreleaser/goreleaser#6870).
+  postflight_steps do
+    on_macos do
+      run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{staged_path}}/memvet"]
     end
   end
 
